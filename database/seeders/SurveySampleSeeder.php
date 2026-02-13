@@ -27,7 +27,9 @@ class SurveySampleSeeder extends Seeder
             'name' => 'Administrator',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
+        $admin->assignRole('Admin');
 
         $enumerator1 = User::firstOrCreate([
             'email' => 'enumerator1@survey.com',
@@ -35,7 +37,9 @@ class SurveySampleSeeder extends Seeder
             'name' => 'Budi Santoso',
             'password' => Hash::make('password'),
             'role' => 'enumerator',
+            'email_verified_at' => now(),
         ]);
+        $enumerator1->assignRole('Enumerator');
 
         $enumerator2 = User::firstOrCreate([
             'email' => 'enumerator2@survey.com',
@@ -43,7 +47,9 @@ class SurveySampleSeeder extends Seeder
             'name' => 'Siti Nurhaliza',
             'password' => Hash::make('password'),
             'role' => 'enumerator',
+            'email_verified_at' => now(),
         ]);
+        $enumerator2->assignRole('Enumerator');
 
         // Create Regions
         $regions = [

@@ -11,16 +11,26 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+/**
+ * =============================================
+ * ROUTE AUTENTIKASI (LOGIN)
+ * =============================================
+ */
+Route::get('login', function () {
+    return redirect('/');
+})->name('login');
+
+Route::post('login', [AuthenticatedSessionController::class, 'store']);
+
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
-
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
-
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    /**
+     * REGISTRASI DINONAKTIFKAN UNTUK KEAMANAN
+     * Menambahkan route dummy agar tidak terjadi RouteNotFoundException
+     * jika masih ada referensi ke route ini di view/cache.
+     */
+    Route::get('register', function () {
+        return redirect('/');
+    })->name('register');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

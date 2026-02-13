@@ -5,18 +5,16 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Landing utama langsung ke dashboard analisis
-Route::get('/', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard.home');
-
-// Route khusus untuk preview komponen (misalnya sidebar saja)
-Route::get('/preview', function (Request $request) {
-    // contoh: /preview?component=dashboard-sidebar
-    $component = $request->query('component');
-
-    return view('component-preview', compact('component'));
-})->name('components.preview');
+/**
+ * =============================================
+ * PINTU MASUK UTAMA (LOGIN LANGSUNG)
+ * =============================================
+ * 
+ * Sesuai permintaan, halaman utama yang muncul pertama kali adalah LOGIN.
+ * Jalur root (/) akan langsung menampilkan form login.
+ */
+Route::get('/', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])
+    ->name('login_root');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -30,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('surveys', \App\Http\Controllers\SurveyController::class);
     Route::get('surveys/{survey}/export', [\App\Http\Controllers\SurveyController::class, 'export'])->name('surveys.export');
     Route::post('surveys/{survey}/import', [\App\Http\Controllers\SurveyController::class, 'import'])->name('surveys.import');
+    Route::post('surveys/{survey}/response', [\App\Http\Controllers\SurveyController::class, 'storeResponse'])->name('surveys.response.store');
 });
 
 require __DIR__.'/auth.php';

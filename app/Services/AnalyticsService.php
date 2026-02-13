@@ -8,25 +8,43 @@ use App\Models\ResponseDetail;
 use App\Models\KpiResult;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * =============================================
+ * ANALYTICS SERVICE (LAYANAN ANALISIS)
+ * =============================================
+ * 
+ * Mesin utama untuk memproses data survey menjadi metrik KPI.
+ * Fungsi utama:
+ * - Membersihkan data sebelum kalkulasi.
+ * - Menghitung NPS (Net Promoter Score).
+ * - Menghitung CSAT (Customer Satisfaction Score).
+ * - Menghitung Indeks Kepuasan Rata-rata.
+ * - Menyediakan data untuk grafik dashboard.
+ */
 class AnalyticsService
 {
     /**
-     * Calculate and cache all KPIs for a given survey.
+     * Hitung dan simpan semua KPI untuk survey tertentu.
+     * Secara otomatis memebersihkan data terlebih dahulu.
      */
     public static function calculateAll(Survey $survey)
     {
+        // Bersihkan data sebelum diolah
+        CleaningService::cleanSurveyData($survey->id);
+
         self::calculateNPS($survey);
+        self::calculateCSAT($survey);
         self::calculateSatisfactionIndex($survey);
         self::calculateParticipationRate($survey);
     }
 
     /**
      * Net Promoter Score (NPS) calculation.
-     * Scale: 0-10. Promoters: 9-10, Passives: 7-8, Detractors: 0-6.
+     * Skala 0-10. Promoters: 9-10, Passives: 7-8, Detractors: 0-6.
+     * Rumus: %Promoters - %Detractors
      */
     protected static function calculateNPS(Survey $survey)
     {
-        // Try to find a question likely to be an NPS question (contains 'recommend' or type scale)
         $question = $survey->questions()
             ->where('question_type', 'scale')
             ->where('question_text', 'like', '%recommend%')
@@ -54,7 +72,36 @@ class AnalyticsService
     }
 
     /**
-     * Average Satisfaction calculation based on all scale questions.
+     * Customer Satisfaction Score (CSAT).
+     * Biasanya dihitung dari persentase responden yang menjawab "Puas" (4) atau "Sangat Puas" (5).
+     */
+    protected static function calculateCSAT(Survey $survey)
+    {
+        $question = $survey->questions()
+            ->where('question_type', 'scale')
+            ->where('question_text', 'like', '%satisfied%')
+            ->first() ?? $survey->questions()->where('question_type', 'scale')->first();
+
+        if (!$question) return;
+
+        $total = ResponseDetail::where('question_id', $question->id)->count();
+        if ($total === 0) return;
+
+        // Asumsi skala 1-5, CSAT adalah % yang jawab 4 atau 5
+        $satisfied = ResponseDetail::where('question_id', $question->id)
+            ->whereRaw('CAST(answer AS DECIMAL) >= 4')
+            ->count();
+
+        $csatValue = ($satisfied / $total) * 100;
+
+        KpiResult::updateOrCreate(
+            ['survey_id' => $survey->id, 'kpi_name' => 'CSAT'],
+            ['kpi_value' => $csatValue, 'period' => now()->format('Y-m')]
+        );
+    }
+
+    /**
+     * Perhitungan Indeks Kepuasan Rata-rata berdasarkan semua pertanyaan skala.
      */
     protected static function calculateSatisfactionIndex(Survey $survey)
     {
@@ -69,7 +116,7 @@ class AnalyticsService
     }
 
     /**
-     * Participation Rate (Placeholder logic).
+     * Menghitung Partisipasi (Jumlah responden unik).
      */
     protected static function calculateParticipationRate(Survey $survey)
     {
@@ -82,7 +129,7 @@ class AnalyticsService
     }
 
     /**
-     * Get summary data for charts with optional filters.
+     * Mengambil data dashboard dengan filter opsional.
      */
     public static function getDashboardData(Survey $survey, array $filters = [])
     {
@@ -97,7 +144,7 @@ class AnalyticsService
     }
 
     /**
-     * Calculate KPIs on the fly based on filters.
+     * Hitung KPI secara dinamis di memori berdasarkan filter yang dipilih.
      */
     protected static function calculateDynamicKpis(Survey $survey, array $filters)
     {
@@ -132,6 +179,27 @@ class AnalyticsService
             }
         }
 
+        // CSAT (Dynamic)
+        $csatQuestion = $survey->questions()
+            ->where('question_type', 'scale')
+            ->where('question_text', 'like', '%satisfied%')
+            ->first() ?? $survey->questions()->where('question_type', 'scale')->first();
+
+        if ($csatQuestion) {
+            $rdQuery = ResponseDetail::where('question_id', $csatQuestion->id)
+                ->whereHas('response', function($q) use ($filters) {
+                    if (!empty($filters['region'])) $q->where('region_id', $filters['region']);
+                    if (!empty($filters['segment'])) $q->where('segment_id', $filters['segment']);
+                });
+            
+            $total = (clone $rdQuery)->count();
+            if ($total > 0) {
+                $satisfied = (clone $rdQuery)->whereRaw('CAST(answer AS DECIMAL) >= 4')->count();
+                $csatValue = ($satisfied / $total) * 100;
+                $kpis->push((object)['kpi_name' => 'CSAT', 'kpi_value' => $csatValue]);
+            }
+        }
+
         // Satisfaction Index
         $avg = ResponseDetail::whereHas('question', function ($query) use ($survey) {
                 $query->where('survey_id', $survey->id)->where('question_type', 'scale');
@@ -148,7 +216,7 @@ class AnalyticsService
     }
 
     /**
-     * Get distribution for charts with filters.
+     * Ambil distribusi jawaban untuk grafik.
      */
     protected static function getDistribution(Survey $survey, array $filters)
     {
