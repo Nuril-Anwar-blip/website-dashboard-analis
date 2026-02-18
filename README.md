@@ -1,60 +1,104 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Survey & Analysis Dashboard - Sistem Manajemen Survei Modern
+
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php)](https://www.php.net/)
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <!-- Ganti link gambar dengan screenshot aplikasi yang sebenarnya -->
+  <img src="https://via.placeholder.com/800x400.png?text=Dashboard+Survey+Preview" alt="Screenshot Dashboard Aplikasi Survey" width="800"/>
 </p>
 
-## About Laravel
+**Survey & Analysis Dashboard** adalah platform berbasis web yang dikembangkan menggunakan **Laravel 12** untuk mempermudah proses pengumpulan, pengelolaan, dan analisis data survei. Aplikasi ini dirancang untuk mendukung kolaborasi antara Admin, Surveyor (Enumerator), dan Analis Data dalam satu ekosistem yang terintegrasi.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Dashboard Interaktif**: Visualisasi data real-time yang menyajikan ringkasan responden, status survei, dan metrik kunci lainnya dalam tampilan grafis yang mudah dipahami.
+- **Manajemen Peran Terpadu**: Kontrol akses yang presisi menggunakan `spatie/laravel-permission` untuk membedakan hak akses antara:
+    - **Admin**: Kontrol penuh atas sistem dan pengguna.
+    - **Surveyor (Enumerator)**: Fokus pada penginputan data lapangan.
+    - **Analis**: Akses khusus untuk melihat dan mengekspor laporan.
+- **Manajemen Data Survei**: Fitur lengkap untuk mengelola kuesioner, data responden, dan validasi input.
+- **Laporan & Ekspor Data Pro**:
+    - **Export Excel**: Mengunduh data survei mentah atau terolah menggunakan `maatwebsite/excel`.
+    - **Cetak PDF**: Menghasilkan laporan siap cetak dengan `barryvdh/laravel-dompdf`.
+- **Desain Responsif**: Antarmuka modern yang dibangun dengan **Tailwind CSS**, memastikan kenyamanan penggunaan baik di desktop maupun perangkat mobile (tablet/smartphone).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Teknologi & Library
 
-## Learning Laravel
+- **Backend**: [PHP](https://www.php.net/) ^8.2
+- **Framework**: [Laravel](https://laravel.com/) ^12.0
+- **Frontend**: [Blade Templates](https://laravel.com/docs/12.x/blade), [Tailwind CSS](https://tailwindcss.com/)
+- **Database**: MySQL / PostgreSQL
+- **Library Kunci**:
+    - `spatie/laravel-permission`: Manajemen Hak Akses User.
+    - `maatwebsite/excel`: Export/Import Data Excel.
+    - `barryvdh/laravel-dompdf`: Pembuatan Laporan PDF.
+    - `laravel/breeze`: Sistem Autentikasi.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## ⚙️ Cara Instalasi
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Ikuti langkah-langkah berikut untuk menjalankan proyek di komputer lokal Anda:
 
-## Laravel Sponsors
+1.  **Clone Repository:**
+    ```bash
+    git clone https://github.com/username/website-dashboard-analisis.git
+    cd website-dashboard-analisis
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+2.  **Install Dependensi Backend:**
+    ```bash
+    composer install
+    ```
 
-### Premium Partners
+3.  **Setup Environment:**
+    Salin file konfigurasi `.env`.
+    ```bash
+    cp .env.example .env
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+4.  **Generate App Key:**
+    ```bash
+    php artisan key:generate
+    ```
 
-## Contributing
+5.  **Konfigurasi Database:**
+    Buka file `.env` dan sesuaikan kredensial database Anda (DB_DATABASE, DB_USERNAME, dll).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6.  **Migrasi & Seeding Database:**
+    Jalankan migrasi untuk membuat tabel dan seeder untuk data awal (termasuk Role & User default).
+    ```bash
+    php artisan migrate:fresh --seed
+    ```
 
-## Code of Conduct
+7.  **Install Dependensi Frontend:**
+    ```bash
+    npm install
+    npm run dev
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+8.  **Jalankan Server:**
+    Buka terminal baru dan jalankan:
+    ```bash
+    php artisan serve
+    ```
+    Akses aplikasi di `http://127.0.0.1:8000`.
 
-## Security Vulnerabilities
+## 🚀 Panduan Penggunaan Singkat
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1.  **Login Awal**:
+    Gunakan akun default yang dibuat oleh seeder (biasanya `admin@example.com` / `password` atau cek `DatabaseSeeder.php`).
+2.  **Manajemen User**:
+    Masuk sebagai Admin untuk membuat akun bagi Surveyor atau Analis.
+3.  **Input Data**:
+    Login sebagai Surveyor untuk mulai memasukkan data survei lapangan.
+4.  **Analisis & Laporan**:
+    Gunakan akun Analis atau Admin untuk melihat grafik dashboard dan mengunduh laporan Excel/PDF.
 
-## License
+## 🚦 Roadmap Pengembangan
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# website-dashboard-analis
+- [ ] Integrasi peta sebaran responden (GIS).
+- [ ] Fitur survei offline dengan sinkronisasi otomatis.
+- [ ] Notifikasi real-time untuk validasi data survei.
+- [ ] API Token untuk integrasi aplikasi mobile pihak ketiga.
